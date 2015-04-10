@@ -23,7 +23,7 @@ end
 % {
 % 	"name": "Jon Boley",
 % 	"date": "2014-06-23",
-% 	"description": "Semi-Anechoic Head Related Transfer Functions",
+% 	"description": "Head Related Transfer Functions",
 % 	"samplingRate_Hz": 44100,
 %   "HRTFs": {
 %     {
@@ -43,16 +43,16 @@ end
 %   {
 % }
 
-
-HRTF = load(matFileName,'Yhrtf','fs');
+hrtfVarName = 'Yhrtf';
+HRTF = load(matFileName,hrtfVarName,'fs');
 
 % normalize
-for ii=1:numel(HRTF.Yhrtf)
-    foo(ii)=max(max(HRTF.Yhrtf(ii).data));
+for ii=1:numel(HRTF.(hrtfVarName))
+    foo(ii)=max(max(HRTF.(hrtfVarName)(ii).data));
 end
 normFactor = max(abs(foo));
 
-angles = linspace(0,360,numel(HRTF.Yhrtf));
+angles = linspace(0,360,numel(HRTF.(hrtfVarName)));
 angles = angles(1:end-1); % first & last are the same
 numAngles = length(angles);
 
@@ -75,8 +75,8 @@ elevation = 0;
 for azimuthIndex=1:numAngles
     azimuth=angles(azimuthIndex);
     
-    samples = resample(HRTF.Yhrtf(azimuthIndex).data,newFs,HRTF.fs);
-    samples = samples/normFactor;
+    samples = HRTF.(hrtfVarName)(azimuthIndex).data;
+    samples = resample(samples,newFs,HRTF.fs)/normFactor;
     numSamples = length(samples);
     
     fprintf(fileID,'    {\n');
